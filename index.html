@@ -37,7 +37,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800 pb-12">
 
-  <!-- Navigaciona traka / Zaglavlje -->
+  <!-- Zaglavlje -->
   <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
@@ -60,11 +60,11 @@
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
     
-    <!-- LEVA KOLONA: Forma za unos (5 od 12 kolona) -->
+    <!-- LEVA KOLONA: Forma -->
     <section class="lg:col-span-5 space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
         
-        <!-- Sekcija za brzi unos iz poruke -->
+        <!-- DODATO: Polje za brzi unos iz poruke -->
         <div class="bg-brand-50 border border-brand-100 rounded-lg p-4 mb-5">
           <div class="flex items-center justify-between mb-2">
             <label for="smartPaste" class="text-sm font-semibold text-brand-800 flex items-center gap-1.5">
@@ -72,17 +72,17 @@
             </label>
             <span class="text-[10px] uppercase tracking-wider bg-brand-100 text-brand-700 font-bold px-2 py-0.5 rounded">Viber / WA / Mail</span>
           </div>
-          <textarea id="smartPaste" rows="3" class="w-full text-xs p-2.5 bg-white border border-brand-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder-gray-400" placeholder="Zalepite celu poruku sa Vibera, WhatsApp-a ili email-a ovde..."></textarea>
+          <textarea id="smartPaste" rows="3" class="w-full text-xs p-2.5 bg-white border border-brand-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder-gray-400" placeholder="Zalepite tekst poruke ovde..."></textarea>
           <button type="button" onclick="parseMessage()" class="mt-2 w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition flex items-center justify-center gap-2 shadow-sm">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Automatski prepoznaj i popuni
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Automatski popuni formu
           </button>
         </div>
 
         <h2 class="text-base font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-          <i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i> Novi Transfer
+          <i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i> Unos Transfera
         </h2>
 
-        <!-- Forma za unos detalja -->
+        <!-- Originalna Forma -->
         <form id="transferForm" onsubmit="saveTransfer(event)" class="space-y-4 text-sm">
           <div>
             <label class="block font-medium text-gray-700 mb-1">Putnik / Grupa *</label>
@@ -102,7 +102,7 @@
 
           <div>
             <label class="block font-medium text-gray-700 mb-1">Ruta / Relacija *</label>
-            <input type="text" id="route" required placeholder="npr. Aerodrom BG -> Cirih" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+            <input type="text" id="route" required placeholder="npr. Beograd -> Cirih" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -123,7 +123,7 @@
       </div>
     </section>
 
-    <!-- DESNA KOLONA: Pregled i lista transfera (7 od 12 kolona) -->
+    <!-- DESNA KOLONA: Prikaz transfera -->
     <section class="lg:col-span-7 space-y-4">
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4 pb-3 border-b border-gray-100">
@@ -136,7 +136,6 @@
           <input type="text" id="searchInput" onkeyup="filterTransfers()" placeholder="Pretraži..." class="text-xs p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none w-full sm:w-48">
         </div>
 
-        <!-- Lista kartica -->
         <div id="transferList" class="space-y-3">
           <div class="text-center py-8 text-gray-400 text-sm">
             <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
@@ -151,9 +150,36 @@
   <script>
     lucide.createIcons();
 
+    // Firebase konfiguracija
+    const firebaseConfig = {
+      databaseURL: "https://feniks-travel-default-rtdb.firebaseio.com"
+    };
+
+    let db;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+    } catch(e) {
+      console.log("Firebase greška:", e);
+    }
+
     let transfers = [];
 
-    // Funkcija za prepoznavanje poruka
+    // Učitavanje iz Firebase baze
+    if(db) {
+      db.ref('transfers').on('value', (snapshot) => {
+        const data = snapshot.val();
+        transfers = [];
+        if (data) {
+          Object.keys(data).forEach(key => {
+            transfers.push({ id: key, ...data[key] });
+          });
+        }
+        renderTransfers();
+      });
+    }
+
+    // Funkcija za prepoznavanje poruke
     function parseMessage() {
       const text = document.getElementById('smartPaste').value;
       if (!text) {
@@ -161,32 +187,27 @@
         return;
       }
 
-      // Vreme
       const timeMatch = text.match(/\b([01]?[0-9]|2[0-3]):[0-5][0-9]\b/);
       if (timeMatch) document.getElementById('time').value = timeMatch[0];
 
-      // Let (npr. JU123, OS738, LX1410)
       const flightMatch = text.match(/\b([A-Z0-9]{2}\s?\d{3,4})\b/i);
       if (flightMatch) document.getElementById('flight').value = flightMatch[0].toUpperCase();
 
-      // Cena
       const priceMatch = text.match(/(\d+)\s*(eur|€|rsd|din|e)/i);
       if (priceMatch) document.getElementById('price').value = priceMatch[1] + ' €';
 
-      // Ime putnika (iz prve linije ili reči "putnik:")
       const lines = text.split('\n').map(l => l.trim()).filter(l => l);
       if (lines.length > 0) {
         let name = lines[0].replace(/^(putnik|name|ime):/i, '').trim();
         document.getElementById('passenger').value = name.split(',')[0];
       }
 
-      // Rutu pokušavamo da nađemo ako postoje strelice ili reči od/do
       if (text.includes('->') || text.includes('-')) {
         const routeMatch = text.match(/([A-ZČĆŽŠĐa-zčćžšđ\s]+(?:\->|-)[A-ZČĆŽŠĐa-zčćžšđ\s]+)/);
         if (routeMatch) document.getElementById('route').value = routeMatch[0].trim();
       }
 
-      alert('⚡ Podaci uspešno izvučeni iz poruke!');
+      alert('Podaci uspešno izvučeni iz poruke!');
     }
 
     // Sačuvanje transfera
@@ -194,31 +215,34 @@
       e.preventDefault();
       
       const transfer = {
-        id: Date.now(),
         passenger: document.getElementById('passenger').value,
         flight: document.getElementById('flight').value,
         time: document.getElementById('time').value,
         route: document.getElementById('route').value,
         driver: document.getElementById('driver').value || 'Nije dodeljen',
-        price: document.getElementById('price').value || '0 €'
+        price: document.getElementById('price').value || '0 €',
+        timestamp: Date.now()
       };
 
-      transfers.unshift(transfer);
-      renderTransfers();
+      if(db) {
+        db.ref('transfers').push(transfer);
+      } else {
+        transfers.unshift({ id: Date.now(), ...transfer });
+        renderTransfers();
+      }
 
-      // Reset forme
       document.getElementById('transferForm').reset();
       document.getElementById('smartPaste').value = '';
     }
 
-    // Prikazivanje transfera u listi
+    // Prikazivanje transfera
     function renderTransfers(listToRender = transfers) {
       const container = document.getElementById('transferList');
       if (listToRender.length === 0) {
         container.innerHTML = `
           <div class="text-center py-8 text-gray-400 text-sm">
             <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
-            <p>Nema pronađenih transfera.</p>
+            <p>Nema unetih transfera.</p>
           </div>
         `;
         lucide.createIcons();
@@ -240,7 +264,7 @@
           </div>
           <div class="flex sm:flex-col justify-between items-end border-t sm:border-t-0 sm:border-l border-gray-200 pt-2 sm:pt-0 sm:pl-4 min-w-[100px]">
             <span class="text-lg font-bold text-green-700">${item.price}</span>
-            <button onclick="deleteTransfer(${item.id})" class="text-gray-400 hover:text-red-600 transition p-1" title="Obriši">
+            <button onclick="deleteTransfer('${item.id}')" class="text-gray-400 hover:text-red-600 transition p-1" title="Obriši">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
           </div>
@@ -250,11 +274,15 @@
       lucide.createIcons();
     }
 
-    // Brisanje transfera
+    // Brisanje
     function deleteTransfer(id) {
       if (confirm('Da li ste sigurni da želite da obrišete ovaj transfer?')) {
-        transfers = transfers.filter(t => t.id !== id);
-        renderTransfers();
+        if(db) {
+          db.ref('transfers/' + id).remove();
+        } else {
+          transfers = transfers.filter(t => t.id !== id);
+          renderTransfers();
+        }
       }
     }
 
