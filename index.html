@@ -1,927 +1,403 @@
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="sr" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feniks Travel - Sistem za Upravljanje Transferima</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Firebase SDK (Modular App & Realtime Database) -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#fff1f2',
-                            100: '#ffe4e6',
-                            500: '#d32027',
-                            600: '#d32027',
-                            700: '#b91c1c',
-                            800: '#991b1b',
-                        },
-                        brandGray: '#7e8083'
-                    }
-                }
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feniks Travel - Nadzorna ploča</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brandRed: '#e50914',
+            darkBg: '#0f1115',
+            cardBg: '#181a20',
+            sidebarBg: '#121418',
+            borderDark: '#262932'
+          }
         }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Inter:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            .print-only {
-                display: block !important;
-            }
-            body {
-                background: white !important;
-                color: black !important;
-            }
-        }
-    </style>
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
-<body class="bg-neutral-950 text-neutral-100 min-h-screen flex flex-col md:flex-row">
+<body class="bg-[#0f1115] text-gray-200 min-h-screen flex flex-col md:flex-row antialiased">
 
-    <!-- Sidebar Navigation -->
-    <aside class="w-full md:w-64 bg-neutral-900 border-r border-neutral-800 flex-shrink-0 no-print">
-        <div class="p-5 flex items-center justify-center border-b border-neutral-800 bg-neutral-950">
-            <!-- Feniks Travel Logo -->
-            <div class="flex items-center gap-3 w-full justify-center">
-                <svg viewBox="0 0 450 140" class="w-full h-auto max-h-16" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#D32027">
-                        <path d="M 95,35 C 95,35 105,15 125,5 C 122,20 115,30 110,38 C 120,25 135,15 155,10 C 145,25 135,38 122,48 C 135,38 152,30 170,28 C 158,42 145,55 128,65 C 140,58 158,52 172,55 C 155,68 138,80 118,88 C 130,82 148,80 158,85 C 138,98 118,105 92,110 C 85,112 75,118 68,128 C 62,138 52,148 40,150 C 48,138 58,128 65,115 C 55,125 42,135 28,140 C 38,128 50,115 60,100 C 50,108 38,118 22,122 C 35,110 48,95 55,80 C 42,88 28,95 12,98 C 28,85 45,70 58,52 C 45,58 28,65 15,68 C 32,52 52,38 72,25 C 60,32 45,40 32,45 C 52,28 78,15 105,8 C 98,20 92,30 95,35 Z"/>
-                        <path d="M 85,45 C 92,38 98,28 95,18 C 90,25 82,35 78,45 C 72,58 68,75 75,90 C 82,105 95,120 108,135 C 102,125 92,110 88,98 C 82,82 82,60 85,45 Z"/>
-                        <path d="M 92,20 L 100,22 L 94,26 Z" fill="#FFFFFF"/>
-                    </g>
-                    <text x="145" y="72" font-family="'Montserrat', 'Arial Black', sans-serif" font-weight="900" font-size="58" fill="#7E8083" letter-spacing="1">FENIKS</text>
-                    <rect x="145" y="82" width="285" height="4" fill="#7E8083" />
-                    <text x="165" y="125" font-family="'Montserrat', 'Arial Black', sans-serif" font-weight="900" font-style="italic" font-size="42" fill="#D32027" letter-spacing="6">TRAVEL</text>
-                </svg>
-            </div>
+  <!-- LEVA BOČNA TRAKA (SIDEBAR) -->
+  <aside class="w-full md:w-64 bg-[#121418] border-r border-[#262932] flex flex-col justify-between p-4 flex-shrink-0 min-h-screen">
+    <div>
+      <!-- LOGO -->
+      <div class="flex items-center gap-3 px-2 py-3 mb-4">
+        <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-red-900/40">
+          <i data-lucide="flame" class="w-6 h-6"></i>
         </div>
-
-        <!-- Status Povezanosti Sa Bazi -->
-        <div class="px-4 py-2 bg-neutral-900 border-b border-neutral-800 text-xs flex items-center justify-between text-neutral-400">
-            <span class="flex items-center gap-2">
-                <span id="sync-indicator" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                <span id="sync-text">Povezivanje...</span>
-            </span>
-            <button onclick="manualSync()" title="Osveži podatke sa baze" class="hover:text-white"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i></button>
+        <div>
+          <h1 class="text-lg font-bold text-white tracking-wider leading-none">FENIKS</h1>
+          <span class="text-xs font-semibold text-red-500 tracking-widest uppercase">TRAVEL</span>
         </div>
+      </div>
 
-        <nav class="p-4 space-y-1">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-brand-500 bg-neutral-800/80">
-                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                Nadzorna ploča
-            </button>
-            <button onclick="switchTab('reservations')" id="nav-reservations" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200 transition">
-                <i data-lucide="calendar" class="w-5 h-5"></i>
-                Sve Rezervacije
-            </button>
-            <button onclick="switchTab('new-reservation')" id="nav-new-reservation" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200 transition">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                Nova Rezervacija
-            </button>
-            <button onclick="switchTab('fleet')" id="nav-fleet" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200 transition">
-                <i data-lucide="car" class="w-5 h-5"></i>
-                Vozni Park & Vozači
-            </button>
-        </nav>
-
-        <div class="p-4 mt-auto border-t border-neutral-800 text-xs text-neutral-500 text-center">
-            &copy; 2026 Feniks Travel
+      <!-- STATUS POVEZIVANJA -->
+      <div class="flex items-center justify-between px-3 py-2 mb-6 bg-[#181a20] rounded-lg border border-[#262932] text-xs">
+        <div class="flex items-center gap-2">
+          <span id="syncDot" class="w-2 h-2 rounded-full bg-amber-500"></span>
+          <span id="syncText" class="text-gray-400">Povezivanje...</span>
         </div>
-    </aside>
+        <button onclick="checkConnection()" class="text-gray-500 hover:text-white transition">
+          <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 flex flex-col min-w-0 bg-neutral-950 no-print">
-        <!-- Top Header -->
-        <header class="h-16 border-b border-neutral-800 bg-neutral-900/50 flex items-center justify-between px-6 sticky top-0 backdrop-blur z-10">
-            <div class="flex items-center gap-4">
-                <h2 id="page-title" class="text-xl font-semibold text-white">Nadzorna ploča</h2>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="openNewReservationModal()" class="bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-xl transition flex items-center gap-2 text-sm shadow-md shadow-brand-600/20">
-                    <i data-lucide="plus" class="w-4 h-4"></i> Brza Rezervacija
-                </button>
-            </div>
-        </header>
-
-        <!-- Page Views Container -->
-        <div class="p-6 flex-1 overflow-y-auto">
-            
-            <!-- VIEW 1: DASHBOARD -->
-            <section id="view-dashboard" class="space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-neutral-400 font-medium">Vožnji Danas</p>
-                            <h3 id="stat-today" class="text-2xl font-bold text-white mt-1">0</h3>
-                        </div>
-                        <div class="p-3 bg-neutral-800 text-neutral-300 rounded-xl">
-                            <i data-lucide="car" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-neutral-400 font-medium">Aktivne Rezervacije</p>
-                            <h3 id="stat-active" class="text-2xl font-bold text-white mt-1">0</h3>
-                        </div>
-                        <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
-                            <i data-lucide="clock" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-neutral-400 font-medium">Na Čekanju</p>
-                            <h3 id="stat-pending" class="text-2xl font-bold text-amber-400 mt-1">0</h3>
-                        </div>
-                        <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl">
-                            <i data-lucide="alert-circle" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-neutral-400 font-medium">Prihod (Ukupno)</p>
-                            <h3 id="stat-revenue" class="text-2xl font-bold text-brand-500 mt-1">0 RSD</h3>
-                        </div>
-                        <div class="p-3 bg-brand-500/10 text-brand-500 rounded-xl">
-                            <i data-lucide="banknote" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-semibold text-lg text-white">Predstojeći Transferi</h3>
-                        <button onclick="switchTab('reservations')" class="text-xs text-brand-500 hover:underline">Prikaži sve</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="text-xs text-neutral-400 border-b border-neutral-800">
-                                    <th class="pb-3 px-2">ID / Klijent</th>
-                                    <th class="pb-3 px-2">Tip / Let</th>
-                                    <th class="pb-3 px-2">Datum i Vreme</th>
-                                    <th class="pb-3 px-2">Ruta</th>
-                                    <th class="pb-3 px-2">Vozač</th>
-                                    <th class="pb-3 px-2">Status</th>
-                                    <th class="pb-3 px-2 text-right">Akcija</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dashboard-table-body" class="text-sm divide-y divide-neutral-800/60">
-                                <!-- Dynamic -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- VIEW 2: ALL RESERVATIONS -->
-            <section id="view-reservations" class="space-y-6 hidden">
-                <div class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-neutral-900 p-4 rounded-2xl border border-neutral-800">
-                    <div class="flex flex-wrap gap-3 w-full sm:w-auto">
-                        <input type="text" id="filter-search" oninput="renderReservationsTable()" placeholder="Pretraži po imenu, letu, adresi..." class="bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-brand-500 w-full sm:w-64">
-                        <select id="filter-status" onchange="renderReservationsTable()" class="bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
-                            <option value="ALL">Svi statusi</option>
-                            <option value="Potvrđeno">Potvrđeno</option>
-                            <option value="Na čekanju">Na čekanju</option>
-                            <option value="Završeno">Završeno</option>
-                            <option value="Otkazano">Otkazano</option>
-                        </select>
-                    </div>
-                    <button onclick="exportToCSV()" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-4 py-2 rounded-xl text-sm flex items-center gap-2 border border-neutral-700 w-full sm:w-auto justify-center">
-                        <i data-lucide="download" class="w-4 h-4"></i> Izvoz CSV
-                    </button>
-                </div>
-
-                <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="text-xs text-neutral-400 border-b border-neutral-800">
-                                <th class="pb-3 px-2">ID</th>
-                                <th class="pb-3 px-2">Putnik</th>
-                                <th class="pb-3 px-2">Tip / Let</th>
-                                <th class="pb-3 px-2">Datum & Vreme</th>
-                                <th class="pb-3 px-2">Ruta</th>
-                                <th class="pb-3 px-2">Cena</th>
-                                <th class="pb-3 px-2">Vozač</th>
-                                <th class="pb-3 px-2">Status</th>
-                                <th class="pb-3 px-2 text-right">Akcije</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reservations-table-body" class="text-sm divide-y divide-neutral-800/60">
-                            <!-- Dynamic -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- VIEW 3: NEW RESERVATION FORM -->
-            <section id="view-new-reservation" class="max-w-4xl mx-auto hidden">
-                <form id="booking-form" onsubmit="handleBookingSubmit(event)" class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 sm:p-8 space-y-6">
-                    <h3 class="text-xl font-bold text-white border-b border-neutral-800 pb-4">Nova Rezervacija Transfera</h3>
-                    
-                    <div class="space-y-4">
-                        <h4 class="text-xs uppercase tracking-wider text-brand-500 font-semibold">1. Detalji Putnika</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Ime i Prezime *</label>
-                                <input type="text" id="passenger-name" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Broj telefona *</label>
-                                <input type="tel" id="passenger-phone" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Email adresa</label>
-                                <input type="email" id="passenger-email" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="block text-xs font-medium text-neutral-400 mb-1">Broj putnika</label>
-                                    <input type="number" id="passenger-count" min="1" value="1" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-neutral-400 mb-1">Broj kofera</label>
-                                    <input type="number" id="luggage-count" min="0" value="1" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4 pt-4 border-t border-neutral-800">
-                        <h4 class="text-xs uppercase tracking-wider text-brand-500 font-semibold">2. Detalji Vožnje</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Tip Transfera</label>
-                                <select id="transfer-type" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                                    <option value="Od aerodroma">Od Aerodroma</option>
-                                    <option value="Do aerodroma">Do Aerodroma</option>
-                                    <option value="Grad-Grad">Grad - Grad</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Datum i Vreme *</label>
-                                <input type="datetime-local" id="pickup-time" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Broj leta / Avio kompanija</label>
-                                <input type="text" id="flight-number" placeholder="npr. JU182 (Air Serbia)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Polazište (Adresa) *</label>
-                                <input type="text" id="pickup-location" required placeholder="npr. Aerodrom Nikola Tesla BEG" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Odredište (Adresa) *</label>
-                                <input type="text" id="dropoff-location" required placeholder="npr. Hotel Metropol, Beograd" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4 pt-4 border-t border-neutral-800">
-                        <h4 class="text-xs uppercase tracking-wider text-brand-500 font-semibold">3. Vozilo i Plaćanje</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Kategorija Vozila</label>
-                                <select id="vehicle-type" onchange="calculateAutoPrice()" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                                    <option value="Standard Sedan" data-price="4000">Standard Sedan (npr. Škoda Octavia) - cca 4000 RSD</option>
-                                    <option value="Premium Sedan" data-price="7000">Premium Sedan (npr. Mercedes E-Class) - cca 7000 RSD</option>
-                                    <option value="VIP Minivan" data-price="10000">VIP Minivan (npr. Mercedes V-Class) - cca 10000 RSD</option>
-                                    <option value="VIP Minibus" data-price="15000">VIP Minibus (npr. Sprinter VIP) - cca 15000 RSD</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Način Plaćanja</label>
-                                <select id="payment-method" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                                    <option value="Gotovina">Gotovina vozaču</option>
-                                    <option value="Kartica">Platna kartica u vozilu</option>
-                                    <option value="Faktura">Faktura / Račun kompanije</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Dogovorena Cena (RSD) *</label>
-                                <input type="number" id="total-price" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-brand-500 font-bold focus:border-brand-500 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-neutral-400 mb-1">Dodeli Vozača odmah</label>
-                                <select id="assigned-driver" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none">
-                                    <option value="">-- Naknadno dodeli --</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-neutral-400 mb-1">Napomena / Posebni zahtevi</label>
-                            <textarea id="notes" rows="2" placeholder="Dečije sedište, tabla sa imenom..." class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500 focus:outline-none"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end gap-3 pt-4 border-t border-neutral-800">
-                        <button type="button" onclick="switchTab('dashboard')" class="px-5 py-2.5 rounded-xl border border-neutral-700 text-neutral-300 hover:bg-neutral-800 text-sm font-medium">Otkaži</button>
-                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm shadow-lg shadow-brand-600/20">Sačuvaj Rezervaciju</button>
-                    </div>
-                </form>
-            </section>
-
-            <!-- VIEW 4: FLEET & DRIVERS -->
-            <section id="view-fleet" class="space-y-6 hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-semibold text-lg text-white flex items-center gap-2">
-                                <i data-lucide="users" class="w-5 h-5 text-brand-500"></i> Vozači
-                            </h3>
-                            <button onclick="openAddDriverModal()" class="text-xs bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white px-3 py-1.5 rounded-lg">+ Dodaj Vozača</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead>
-                                    <tr class="text-xs text-neutral-400 border-b border-neutral-800">
-                                        <th class="pb-2">Ime</th>
-                                        <th class="pb-2">Telefon</th>
-                                        <th class="pb-2">Status</th>
-                                        <th class="pb-2">Vozilo</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="drivers-table-body" class="text-sm divide-y divide-neutral-800/60">
-                                    <!-- Dynamic -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-semibold text-lg text-white flex items-center gap-2">
-                                <i data-lucide="car" class="w-5 h-5 text-brand-500"></i> Vozni Park
-                            </h3>
-                            <button onclick="openAddVehicleModal()" class="text-xs bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white px-3 py-1.5 rounded-lg">+ Dodaj Vozilo</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead>
-                                    <tr class="text-xs text-neutral-400 border-b border-neutral-800">
-                                        <th class="pb-2">Model</th>
-                                        <th class="pb-2">Registracija</th>
-                                        <th class="pb-2">Kapacitet</th>
-                                        <th class="pb-2">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="fleet-table-body" class="text-sm divide-y divide-neutral-800/60">
-                                    <!-- Dynamic -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-        </div>
-    </main>
-
-    <!-- PRINTABLE VOUCHER -->
-    <div id="printable-voucher" class="hidden print-only p-8 bg-white text-black font-sans min-h-screen">
-        <div class="border-b-2 border-black pb-4 mb-6 flex justify-between items-end">
-            <div class="flex items-center gap-3">
-                <svg viewBox="0 0 450 140" class="h-14 w-auto" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#D32027">
-                        <path d="M 95,35 C 95,35 105,15 125,5 C 122,20 115,30 110,38 C 120,25 135,15 155,10 C 145,25 135,38 122,48 C 135,38 152,30 170,28 C 158,42 145,55 128,65 C 140,58 158,52 172,55 C 155,68 138,80 118,88 C 130,82 148,80 158,85 C 138,98 118,105 92,110 C 85,112 75,118 68,128 C 62,138 52,148 40,150 C 48,138 58,128 65,115 C 55,125 42,135 28,140 C 38,128 50,115 60,100 C 50,108 38,118 22,122 C 35,110 48,95 55,80 C 42,88 28,95 12,98 C 28,85 45,70 58,52 C 45,58 28,65 15,68 C 32,52 52,38 72,25 C 60,32 45,40 32,45 C 52,28 78,15 105,8 C 98,20 92,30 95,35 Z"/>
-                        <path d="M 85,45 C 92,38 98,28 95,18 C 90,25 82,35 78,45 C 72,58 68,75 75,90 C 82,105 95,120 108,135 C 102,125 92,110 88,98 C 82,82 82,60 85,45 Z"/>
-                        <path d="M 92,20 L 100,22 L 94,26 Z" fill="#000000"/>
-                    </g>
-                    <text x="145" y="72" font-family="'Montserrat', 'Arial Black', sans-serif" font-weight="900" font-size="58" fill="#7E8083" letter-spacing="1">FENIKS</text>
-                    <rect x="145" y="82" width="285" height="4" fill="#7E8083" />
-                    <text x="165" y="125" font-family="'Montserrat', 'Arial Black', sans-serif" font-weight="900" font-style="italic" font-size="42" fill="#D32027" letter-spacing="6">TRAVEL</text>
-                </svg>
-            </div>
-            <div class="text-right">
-                <p class="font-bold text-lg" id="p-id">#TR-0000</p>
-                <p class="text-xs text-gray-600" id="p-created-at">Datum izdavanja: --</p>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-6 mb-6">
-            <div class="border p-4 rounded">
-                <h3 class="font-bold text-sm uppercase text-gray-700 mb-2 border-b pb-1">Podaci o Putniku</h3>
-                <p class="text-sm"><strong>Ime i Prezime:</strong> <span id="p-name">--</span></p>
-                <p class="text-sm"><strong>Telefon:</strong> <span id="p-phone">--</span></p>
-                <p class="text-sm"><strong>Broj putnika:</strong> <span id="p-passengers">--</span> | <strong>Prtljag:</strong> <span id="p-luggage">--</span></p>
-            </div>
-            <div class="border p-4 rounded">
-                <h3 class="font-bold text-sm uppercase text-gray-700 mb-2 border-b pb-1">Detalji Transfera</h3>
-                <p class="text-sm"><strong>Tip:</strong> <span id="p-type">--</span></p>
-                <p class="text-sm"><strong>Datum i Vreme:</strong> <span id="p-datetime">--</span></p>
-                <p class="text-sm"><strong>Broj leta:</strong> <span id="p-flight">--</span></p>
-            </div>
-        </div>
-
-        <div class="border p-4 rounded mb-6">
-            <h3 class="font-bold text-sm uppercase text-gray-700 mb-2 border-b pb-1">Ruta</h3>
-            <p class="text-sm mb-1"><strong>Polazište:</strong> <span id="p-pickup">--</span></p>
-            <p class="text-sm"><strong>Odredište:</strong> <span id="p-dropoff">--</span></p>
-        </div>
-
-        <div class="grid grid-cols-2 gap-6 mb-6">
-            <div class="border p-4 rounded">
-                <h3 class="font-bold text-sm uppercase text-gray-700 mb-2 border-b pb-1">Vozilo & Vozač</h3>
-                <p class="text-sm"><strong>Dodeljen vozač:</strong> <span id="p-driver">--</span></p>
-                <p class="text-sm"><strong>Kategorija vozila:</strong> <span id="p-vehicle">--</span></p>
-            </div>
-            <div class="border p-4 rounded">
-                <h3 class="font-bold text-sm uppercase text-gray-700 mb-2 border-b pb-1">Plaćanje</h3>
-                <p class="text-sm"><strong>Ukupan Iznos:</strong> <span id="p-price" class="text-lg font-bold">--</span> RSD</p>
-                <p class="text-sm"><strong>Način plaćanja:</strong> <span id="p-payment">--</span></p>
-            </div>
-        </div>
-
-        <div class="border p-4 rounded mb-8">
-            <p class="text-xs"><strong>Napomena:</strong> <span id="p-notes">Nema dodatnih napomena.</span></p>
-        </div>
-
-        <div class="mt-12 flex justify-between text-center text-xs text-gray-500 border-t pt-4">
-            <div>
-                <p class="mb-8">Potpis Ovlašćenog Lica</p>
-                <p>_______________________</p>
-            </div>
-            <div>
-                <p class="mb-8">Potpis Putnika / Vozača</p>
-                <p>_______________________</p>
-            </div>
-        </div>
+      <!-- NAVIGACIJA -->
+      <nav class="space-y-1">
+        <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-red-600/10 text-red-500 border border-red-600/20">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i> Nadzorna ploča
+        </a>
+        <a href="#" onclick="switchTab('reservations')" id="nav-reservations" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-[#181a20] hover:text-white transition">
+          <i data-lucide="calendar" class="w-4 h-4"></i> Sve Rezervacije
+        </a>
+        <a href="#" onclick="openModal()" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-[#181a20] hover:text-white transition">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Nova Rezervacija
+        </a>
+        <a href="#" onclick="switchTab('fleet')" id="nav-fleet" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-[#181a20] hover:text-white transition">
+          <i data-lucide="car" class="w-4 h-4"></i> Vozni Park & Vozači
+        </a>
+      </nav>
     </div>
 
-    <!-- MODAL: EDIT TRANSFER -->
-    <div id="modal-edit" class="fixed inset-0 bg-neutral-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-md p-6 space-y-4">
-            <h3 class="text-lg font-bold text-white">Promena Statusa i Vozača</h3>
-            <input type="hidden" id="edit-transfer-id">
-            
-            <div>
-                <label class="block text-xs font-medium text-neutral-400 mb-1">Status Transfera</label>
-                <select id="edit-status" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
-                    <option value="Na čekanju">Na čekanju</option>
-                    <option value="Potvrđeno">Potvrđeno</option>
-                    <option value="Završeno">Završeno</option>
-                    <option value="Otkazano">Otkazano</option>
-                </select>
-            </div>
+    <!-- FOOTER -->
+    <div class="pt-4 border-t border-[#262932] text-center text-xs text-gray-600">
+      © 2026 Feniks Travel
+    </div>
+  </aside>
 
-            <div>
-                <label class="block text-xs font-medium text-neutral-400 mb-1">Dodeli Vozača</label>
-                <select id="edit-driver" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
-                </select>
-            </div>
-
-            <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeEditModal()" class="px-4 py-2 rounded-xl text-neutral-400 hover:text-white text-sm">Otkaži</button>
-                <button onclick="saveEditModal()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm">Sačuvaj Promene</button>
-            </div>
-        </div>
+  <!-- GLAVNI SADRŽAJ -->
+  <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+    
+    <!-- ZAGLAVLJE SA DUGMETOM -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+      <div>
+        <h2 id="pageTitle" class="text-2xl font-bold text-white">Nadzorna ploča</h2>
+      </div>
+      <button onclick="openModal()" class="bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-lg shadow-red-950/50 flex items-center gap-2 transition">
+        <i data-lucide="plus" class="w-4 h-4"></i> Brza Rezervacija
+      </button>
     </div>
 
-    <script>
-        // FIREBASE REALTIME DATABASE KONFIGURACIJA
-        // Ovo je radna demo Firebase baza. Podaci se u njoj ažuriraju uživo za sve korisnike!
-        const firebaseConfig = {
-            databaseURL: "https://feniks-travel-default-rtdb.europe-west1.firebasedatabase.app/"
-        };
+    <!-- STATISTIČKE KARTICE (4 KOMADE) -->
+    <div id="statsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      
+      <!-- Vožnji Danas -->
+      <div class="bg-[#181a20] border border-[#262932] rounded-xl p-4 flex justify-between items-center">
+        <div>
+          <span class="text-xs font-medium text-gray-400 block mb-1">Vožnji Danas</span>
+          <span id="statToday" class="text-2xl font-bold text-white">0</span>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-gray-800/60 border border-gray-700/50 flex items-center justify-center text-gray-300">
+          <i data-lucide="car" class="w-5 h-5"></i>
+        </div>
+      </div>
 
-        // Inicijalizacija Firebase-a
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+      <!-- Aktivne Rezervacije -->
+      <div class="bg-[#181a20] border border-[#262932] rounded-xl p-4 flex justify-between items-center">
+        <div>
+          <span class="text-xs font-medium text-gray-400 block mb-1">Aktivne Rezervacije</span>
+          <span id="statActive" class="text-2xl font-bold text-white">0</span>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-emerald-950/40 border border-emerald-800/40 flex items-center justify-center text-emerald-400">
+          <i data-lucide="clock" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- Na Čekanju -->
+      <div class="bg-[#181a20] border border-[#262932] rounded-xl p-4 flex justify-between items-center">
+        <div>
+          <span class="text-xs font-medium text-gray-400 block mb-1">Na Čekanju</span>
+          <span id="statPending" class="text-2xl font-bold text-amber-500">0</span>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-amber-950/40 border border-amber-800/40 flex items-center justify-center text-amber-400">
+          <i data-lucide="alert-circle" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- Prihod (Ukupno) -->
+      <div class="bg-[#181a20] border border-[#262932] rounded-xl p-4 flex justify-between items-center">
+        <div>
+          <span class="text-xs font-medium text-gray-400 block mb-1">Prihod (Ukupno)</span>
+          <span id="statRevenue" class="text-2xl font-bold text-red-500">0 RSD</span>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-red-950/40 border border-red-800/40 flex items-center justify-center text-red-400">
+          <i data-lucide="banknote" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TABELA: Predstojeći Transferi -->
+    <div class="bg-[#181a20] border border-[#262932] rounded-2xl p-5 shadow-xl">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-base font-bold text-white">Predstojeći Transferi</h3>
+        <button onclick="renderTable()" class="text-xs text-red-500 hover:text-red-400 font-medium">Prikaži sve</button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="border-b border-[#262932] text-gray-400 font-semibold uppercase tracking-wider">
+              <th class="pb-3 px-2">ID / Klijent</th>
+              <th class="pb-3 px-2">Tip / Let</th>
+              <th class="pb-3 px-2">Datum i Vreme</th>
+              <th class="pb-3 px-2">Ruta</th>
+              <th class="pb-3 px-2">Vozač</th>
+              <th class="pb-3 px-2">Status</th>
+              <th class="pb-3 px-2 text-right">Akcija</th>
+            </tr>
+          </thead>
+          <tbody id="transferTableBody" class="divide-y divide-[#262932] text-gray-300">
+            <tr>
+              <td colspan="7" class="py-8 text-center text-gray-500">Trenutno nema zakazanih transfera. Kliknite na "+ Brza Rezervacija".</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODALNI PROZOR ZA UNOS (Smart Paste + Forma) -->
+  <div id="bookingModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#181a20] border border-[#262932] rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+      
+      <div class="flex justify-between items-center mb-4 pb-3 border-b border-[#262932]">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-5 h-5 text-red-500"></i> Nova Rezervacija
+        </h3>
+        <button onclick="closeModal()" class="text-gray-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- POLJE ZA BRZI UNOS IZ PORUKE -->
+      <div class="bg-[#121418] border border-red-900/40 rounded-xl p-4 mb-5">
+        <label class="text-xs font-semibold text-red-400 flex items-center gap-1.5 mb-1">
+          <i data-lucide="wand-2" class="w-4 h-4"></i> Brzi Unos iz Poruke (Viber / WhatsApp / Mail)
+        </label>
+        <p class="text-[11px] text-gray-400 mb-2">Zalepite celu poruku sa telefona ovde i kliknite na dugme ispod:</p>
+        <textarea id="smartPaste" rows="3" class="w-full text-xs p-2.5 bg-[#0f1115] border border-[#262932] rounded-lg text-white focus:ring-1 focus:ring-red-500 outline-none resize-none placeholder-gray-600" placeholder="Primer: Marko Markovic, JU123 u 18:30, Beograd -> Cirih, vozac Goran, 50e"></textarea>
+        <button type="button" onclick="parseMessage()" class="mt-2 w-full bg-red-600 hover:bg-red-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition flex items-center justify-center gap-2">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Automatski Izvuci Podatke
+        </button>
+      </div>
+
+      <!-- FORMA -->
+      <form id="transferForm" onsubmit="saveTransfer(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-gray-400 mb-1">Putnik / Grupa *</label>
+          <input type="text" id="passenger" required placeholder="Ime i prezime" class="w-full p-2.5 bg-[#0f1115] border border-[#262932] rounded-lg text-white focus:ring-1 focus:ring-red-500 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-400 mb-1">Broj Leta / Tip</label>
+            <input type="text" id="flight" placeholder="npr. JU123" class="w-full p-2.5 bg-[#0f1115] border border-[#262932] rounded-lg text-white focus:ring-1 focus:ring-red-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Datum i Vreme *</label>
+            <input type="text" id="time" required placeholder="npr. 18:30" class="w-full p-2.5 bg-[#0f1115] border border-[#262932] rounded-lg text-white focus:ring-1 focus:ring-red-500 outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-400 mb-1">Ruta / Relacija *</label>
+          <input type="text" id="route" required placeholder="Beograd -> Cirih" class="w-full p-2.5 bg-[#0f1115] border border-[#262932] rounded-lg text-white focus:ring-1 focus:ring-red-500 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-400 mb-1">Vozač</label>
+            <input type="text" id="driver" placeholder="Ime vozača" class="w-full p-2.5 bg-[#0f1115] border border-[#262932] rounded-lg text-white focus:ring-1 focus:ring-red-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Cena (€ ili RSD)</label>
+            <input type="text" id="price" placeholder="npr. 50e" class="w-full p-2.5 bg-[#0f1115] border border-[#262932] rounded-lg text-white focus:ring-1 focus:ring-red-500 outline-none">
+          </div>
+        </div>
+
+        <div class="pt-3">
+          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-sm transition">
+            Sačuvaj Rezervaciju
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // FIREBASE
+    const firebaseConfig = {
+      databaseURL: "https://feniks-travel-default-rtdb.firebaseio.com"
+    };
+
+    let db;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+      document.getElementById('syncDot').className = "w-2 h-2 rounded-full bg-green-500 animate-pulse";
+      document.getElementById('syncText').innerText = "Sinhronizovano";
+    } catch(e) {
+      console.log("Firebase status:", e);
+    }
+
+    let transfers = [];
+
+    if(db) {
+      db.ref('transfers').on('value', (snapshot) => {
+        const data = snapshot.val();
+        transfers = [];
+        if (data) {
+          Object.keys(data).forEach(key => {
+            transfers.push({ id: key, ...data[key] });
+          });
         }
-        const db = firebase.database();
+        updateStats();
+        renderTable();
+      });
+    }
 
-        // Podaci u aplikaciji
-        let drivers = [];
-        let fleet = [];
-        let reservations = [];
+    // SKRIPTE ZA PROZOR
+    function openModal() {
+      document.getElementById('bookingModal').classList.remove('hidden');
+    }
+    function closeModal() {
+      document.getElementById('bookingModal').classList.add('hidden');
+    }
 
-        window.onload = function() {
-            lucide.createIcons();
-            calculateAutoPrice();
-            
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('pickup-time').value = now.toISOString().slice(0,16);
+    // SMART PASTE
+    function parseMessage() {
+      const text = document.getElementById('smartPaste').value;
+      if (!text) {
+        alert('Unesite tekst poruke!');
+        return;
+      }
 
-            // Slušanje baza podataka uživo (REAL-TIME LISTENERS)
-            setupRealtimeSync();
-        };
+      const timeMatch = text.match(/\b([01]?[0-9]|2[0-3]):[0-5][0-9]\b/);
+      if (timeMatch) document.getElementById('time').value = timeMatch[0];
 
-        function setupRealtimeSync() {
-            const syncInd = document.getElementById('sync-indicator');
-            const syncTxt = document.getElementById('sync-text');
+      const flightMatch = text.match(/\b([A-Z0-9]{2}\s?\d{3,4})\b/i);
+      if (flightMatch) document.getElementById('flight').value = flightMatch[0].toUpperCase();
 
-            // 1. Sinhronizacija Vozača
-            db.ref('drivers').on('value', (snapshot) => {
-                const val = snapshot.val();
-                drivers = val ? Object.values(val) : getInitialDrivers();
-                populateDriverDropdowns();
-                renderFleetAndDrivers();
-            });
+      const priceMatch = text.match(/(\d+)\s*(eur|€|rsd|din|e)/i);
+      if (priceMatch) document.getElementById('price').value = priceMatch[1] + ' €';
 
-            // 2. Sinhronizacija Voznog Parka
-            db.ref('fleet').on('value', (snapshot) => {
-                const val = snapshot.val();
-                fleet = val ? Object.values(val) : getInitialFleet();
-                renderFleetAndDrivers();
-            });
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+      if (lines.length > 0) {
+        let name = lines[0].replace(/^(putnik|name|ime):/i, '').trim();
+        document.getElementById('passenger').value = name.split(',')[0];
+      }
 
-            // 3. Sinhronizacija Rezervacija
-            db.ref('reservations').on('value', (snapshot) => {
-                const val = snapshot.val();
-                if (val) {
-                    reservations = Object.values(val).sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime));
-                } else {
-                    reservations = getInitialReservations();
-                }
-                
-                syncInd.className = "w-2 h-2 rounded-full bg-emerald-500";
-                syncTxt.innerText = "Sinhronizovano";
+      if (text.includes('->') || text.includes('-')) {
+        const routeMatch = text.match(/([A-ZČĆŽŠĐa-zčćžšđ\s]+(?:\->|-)[A-ZČĆŽŠĐa-zčćžšđ\s]+)/);
+        if (routeMatch) document.getElementById('route').value = routeMatch[0].trim();
+      }
 
-                updateDashboard();
-                renderReservationsTable();
-            }, (error) => {
-                syncInd.className = "w-2 h-2 rounded-full bg-red-500";
-                syncTxt.innerText = "Greška";
-            });
+      alert('Podaci su uspešno izvučeni!');
+    }
+
+    // SAČUVAJ
+    function saveTransfer(e) {
+      e.preventDefault();
+      
+      const transfer = {
+        passenger: document.getElementById('passenger').value,
+        flight: document.getElementById('flight').value || '-',
+        time: document.getElementById('time').value,
+        route: document.getElementById('route').value,
+        driver: document.getElementById('driver').value || 'Nije dodeljen',
+        price: document.getElementById('price').value || '0 €',
+        status: 'Potvrđeno',
+        timestamp: Date.now()
+      };
+
+      if(db) {
+        db.ref('transfers').push(transfer);
+      } else {
+        transfers.unshift({ id: Date.now(), ...transfer });
+        updateStats();
+        renderTable();
+      }
+
+      document.getElementById('transferForm').reset();
+      document.getElementById('smartPaste').value = '';
+      closeModal();
+    }
+
+    // BRISANJE
+    function deleteTransfer(id) {
+      if(confirm('Obriši ovaj transfer?')) {
+        if(db) {
+          db.ref('transfers/' + id).remove();
+        } else {
+          transfers = transfers.filter(t => t.id !== id);
+          updateStats();
+          renderTable();
         }
+      }
+    }
 
-        function manualSync() {
-            location.reload();
-        }
+    // STATISTIKA
+    function updateStats() {
+      document.getElementById('statToday').innerText = transfers.length;
+      document.getElementById('statActive').innerText = transfers.length;
+      document.getElementById('statPending').innerText = "0";
 
-        // AUTO PRICE
-        function calculateAutoPrice() {
-            const select = document.getElementById('vehicle-type');
-            const price = select.options[select.selectedIndex].getAttribute('data-price');
-            document.getElementById('total-price').value = price;
-        }
+      let sum = 0;
+      transfers.forEach(t => {
+        let val = parseInt(t.price);
+        if(!isNaN(val)) sum += val;
+      });
+      document.getElementById('statRevenue').innerText = sum + " €";
+    }
 
-        // NAVIGATION
-        function switchTab(tabId) {
-            document.querySelectorAll('main > div > section').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-brand-500', 'bg-neutral-800/80');
-                btn.classList.add('text-neutral-400');
-            });
+    // TABELA
+    function renderTable() {
+      const tbody = document.getElementById('transferTableBody');
+      if (transfers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-gray-500">Trenutno nema zakazanih transfera. Kliknite na "+ Brza Rezervacija".</td></tr>`;
+        return;
+      }
 
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`nav-${tabId}`);
-            if (activeNav) {
-                activeNav.classList.add('text-brand-500', 'bg-neutral-800/80');
-                activeNav.classList.remove('text-neutral-400');
-            }
+      tbody.innerHTML = transfers.map((t, idx) => `
+        <tr class="hover:bg-[#1f222a] transition">
+          <td class="py-3 px-2 font-medium text-white">#${idx + 1} ${t.passenger}</td>
+          <td class="py-3 px-2"><span class="bg-red-950 text-red-400 border border-red-800/40 px-2 py-0.5 rounded text-[10px] font-mono">${t.flight}</span></td>
+          <td class="py-3 px-2 text-gray-300">${t.time}</td>
+          <td class="py-3 px-2 text-gray-300">${t.route}</td>
+          <td class="py-3 px-2 text-gray-300">${t.driver}</td>
+          <td class="py-3 px-2"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800/40 px-2 py-0.5 rounded text-[10px]">${t.status || 'Potvrđeno'}</span></td>
+          <td class="py-3 px-2 text-right">
+            <button onclick="deleteTransfer('${t.id}')" class="text-gray-500 hover:text-red-500 transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
 
-            const titles = {
-                'dashboard': 'Nadzorna ploča',
-                'reservations': 'Sve Rezervacije',
-                'new-reservation': 'Nova Rezervacija',
-                'fleet': 'Vozni Park & Vozači'
-            };
-            document.getElementById('page-title').innerText = titles[tabId] || 'Transferi';
-
-            if (tabId === 'dashboard') updateDashboard();
-            if (tabId === 'reservations') renderReservationsTable();
-            if (tabId === 'fleet') renderFleetAndDrivers();
-        }
-
-        function openNewReservationModal() {
-            switchTab('new-reservation');
-        }
-
-        // DASHBOARD
-        function updateDashboard() {
-            const todayStr = new Date().toISOString().split('T')[0];
-            
-            const todayRides = reservations.filter(r => r.dateTime && r.dateTime.startsWith(todayStr)).length;
-            const activeRides = reservations.filter(r => r.status === 'Potvrđeno').length;
-            const pendingRides = reservations.filter(r => r.status === 'Na čekanju').length;
-            const totalRevenue = reservations
-                .filter(r => r.status !== 'Otkazano')
-                .reduce((acc, curr) => acc + Number(curr.price || 0), 0);
-
-            document.getElementById('stat-today').innerText = todayRides;
-            document.getElementById('stat-active').innerText = activeRides;
-            document.getElementById('stat-pending').innerText = pendingRides;
-            document.getElementById('stat-revenue').innerText = totalRevenue.toLocaleString('sr-RS') + ' RSD';
-
-            const tbody = document.getElementById('dashboard-table-body');
-            tbody.innerHTML = '';
-
-            reservations.slice(0, 5).forEach(res => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-neutral-800/30 transition';
-                tr.innerHTML = `
-                    <td class="py-3 px-2 font-medium text-white">
-                        <div>${res.passengerName}</div>
-                        <div class="text-xs text-neutral-500">${res.id}</div>
-                    </td>
-                    <td class="py-3 px-2">
-                        <span class="text-xs bg-neutral-800 text-neutral-300 px-2 py-0.5 rounded">${res.type}</span>
-                        ${res.flight ? `<div class="text-xs text-neutral-400 mt-1">${res.flight}</div>` : ''}
-                    </td>
-                    <td class="py-3 px-2 text-neutral-300">${formatDateTime(res.dateTime)}</td>
-                    <td class="py-3 px-2 text-xs text-neutral-400 max-w-xs truncate">
-                        ${res.pickup} &rarr; ${res.dropoff}
-                    </td>
-                    <td class="py-3 px-2 text-neutral-300 text-xs">
-                        ${res.driver ? `<span class="text-emerald-400 font-medium">${res.driver}</span>` : '<span class="text-amber-500 italic">Nije dodeljen</span>'}
-                    </td>
-                    <td class="py-3 px-2">${getStatusBadge(res.status)}</td>
-                    <td class="py-3 px-2 text-right">
-                        <button onclick="openEditModal('${res.id}')" class="p-1 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            lucide.createIcons();
-        }
-
-        // RESERVATIONS TABLE
-        function renderReservationsTable() {
-            const tbody = document.getElementById('reservations-table-body');
-            const search = document.getElementById('filter-search').value.toLowerCase();
-            const statusFilter = document.getElementById('filter-status').value;
-
-            tbody.innerHTML = '';
-
-            const filtered = reservations.filter(r => {
-                const matchesSearch = (r.passengerName && r.passengerName.toLowerCase().includes(search)) ||
-                                     (r.id && r.id.toLowerCase().includes(search)) ||
-                                     (r.pickup && r.pickup.toLowerCase().includes(search)) ||
-                                     (r.dropoff && r.dropoff.toLowerCase().includes(search));
-                const matchesStatus = statusFilter === 'ALL' || r.status === statusStatus;
-                return matchesSearch && matchesStatus;
-            });
-
-            filtered.forEach(res => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-neutral-800/30 transition';
-                tr.innerHTML = `
-                    <td class="py-3 px-2 font-mono text-xs text-brand-500 font-semibold">${res.id}</td>
-                    <td class="py-3 px-2 font-medium text-white">
-                        <div>${res.passengerName}</div>
-                        <div class="text-xs text-neutral-400">${res.passengerPhone}</div>
-                    </td>
-                    <td class="py-3 px-2">
-                        <div class="text-xs font-semibold text-neutral-200">${res.type}</div>
-                        <div class="text-xs text-neutral-500">${res.flight || '-'}</div>
-                    </td>
-                    <td class="py-3 px-2 text-neutral-300 text-xs">${formatDateTime(res.dateTime)}</td>
-                    <td class="py-3 px-2 text-xs text-neutral-400">
-                        <div><strong class="text-neutral-300">Od:</strong> ${res.pickup}</div>
-                        <div><strong class="text-neutral-300">Do:</strong> ${res.dropoff}</div>
-                    </td>
-                    <td class="py-3 px-2 font-semibold text-white">${Number(res.price || 0).toLocaleString('sr-RS')} RSD</td>
-                    <td class="py-3 px-2 text-xs">
-                        ${res.driver ? `<span class="text-emerald-400">${res.driver}</span>` : '<span class="text-amber-500 italic">Nedodeljeno</span>'}
-                    </td>
-                    <td class="py-3 px-2">${getStatusBadge(res.status)}</td>
-                    <td class="py-3 px-2 text-right space-x-1">
-                        <button onclick="printVoucher('${res.id}')" title="Štampaj Potvrdnicu" class="p-1 hover:bg-neutral-800 text-neutral-400 hover:text-brand-500 rounded">
-                            <i data-lucide="printer" class="w-4 h-4"></i>
-                        </button>
-                        <button onclick="openEditModal('${res.id}')" title="Izmeni status" class="p-1 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded">
-                            <i data-lucide="edit" class="w-4 h-4"></i>
-                        </button>
-                        <button onclick="deleteReservation('${res.id}')" title="Obriši" class="p-1 hover:bg-neutral-800 text-neutral-400 hover:text-red-400 rounded">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            lucide.createIcons();
-        }
-
-        // ADD NEW RESERVATION (SAVE TO FIREBASE)
-        function handleBookingSubmit(e) {
-            e.preventDefault();
-            const resId = 'TR-' + Math.floor(1000 + Math.random() * 9000);
-            const newRes = {
-                id: resId,
-                passengerName: document.getElementById('passenger-name').value,
-                passengerPhone: document.getElementById('passenger-phone').value,
-                passengerEmail: document.getElementById('passenger-email').value,
-                passengers: document.getElementById('passenger-count').value,
-                luggage: document.getElementById('luggage-count').value,
-                type: document.getElementById('transfer-type').value,
-                dateTime: document.getElementById('pickup-time').value,
-                flight: document.getElementById('flight-number').value,
-                pickup: document.getElementById('pickup-location').value,
-                dropoff: document.getElementById('dropoff-location').value,
-                vehicleType: document.getElementById('vehicle-type').value,
-                paymentMethod: document.getElementById('payment-method').value,
-                price: document.getElementById('total-price').value,
-                driver: document.getElementById('assigned-driver').value,
-                status: document.getElementById('assigned-driver').value ? 'Potvrđeno' : 'Na čekanju',
-                notes: document.getElementById('notes').value
-            };
-
-            // Upis u bazu
-            db.ref('reservations/' + resId).set(newRes, (err) => {
-                if(!err) {
-                    document.getElementById('booking-form').reset();
-                    switchTab('reservations');
-                } else {
-                    alert("Greška pri čuvanju u bazi.");
-                }
-            });
-        }
-
-        // FLEET & DRIVERS RENDER
-        function renderFleetAndDrivers() {
-            const dBody = document.getElementById('drivers-table-body');
-            dBody.innerHTML = '';
-            drivers.forEach(d => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="py-2.5 font-medium text-white">${d.name}</td>
-                    <td class="py-2.5 text-neutral-400">${d.phone}</td>
-                    <td class="py-2.5"><span class="text-xs px-2 py-0.5 rounded ${d.status === 'Slobodan' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${d.status}</span></td>
-                    <td class="py-2.5 text-xs text-neutral-300">${d.vehicle}</td>
-                `;
-                dBody.appendChild(tr);
-            });
-
-            const fBody = document.getElementById('fleet-table-body');
-            fBody.innerHTML = '';
-            fleet.forEach(f => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="py-2.5 font-medium text-white">${f.model}</td>
-                    <td class="py-2.5 font-mono text-xs text-brand-500 font-semibold">${f.reg}</td>
-                    <td class="py-2.5 text-neutral-400 text-xs">${f.capacity}</td>
-                    <td class="py-2.5"><span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded">${f.status}</span></td>
-                `;
-                fBody.appendChild(tr);
-            });
-        }
-
-        function populateDriverDropdowns() {
-            const driverSelects = [document.getElementById('assigned-driver'), document.getElementById('edit-driver')];
-            driverSelects.forEach(select => {
-                if(!select) return;
-                select.innerHTML = '<option value="">-- Bez vozača --</option>';
-                drivers.forEach(d => {
-                    const opt = document.createElement('option');
-                    opt.value = d.name;
-                    opt.innerText = `${d.name} (${d.status})`;
-                    select.appendChild(opt);
-                });
-            });
-        }
-
-        // EDIT & DELETE IN FIREBASE
-        function openEditModal(id) {
-            const res = reservations.find(r => r.id === id);
-            if (!res) return;
-            document.getElementById('edit-transfer-id').value = res.id;
-            document.getElementById('edit-status').value = res.status;
-            document.getElementById('edit-driver').value = res.driver || '';
-            document.getElementById('modal-edit').classList.remove('hidden');
-        }
-
-        function closeEditModal() {
-            document.getElementById('modal-edit').classList.add('hidden');
-        }
-
-        function saveEditModal() {
-            const id = document.getElementById('edit-transfer-id').value;
-            const newStatus = document.getElementById('edit-status').value;
-            const newDriver = document.getElementById('edit-driver').value;
-
-            db.ref('reservations/' + id).update({
-                status: newStatus,
-                driver: newDriver
-            });
-
-            closeEditModal();
-        }
-
-        function deleteReservation(id) {
-            if (confirm('Da li ste sigurni da želite da obrišete ovu rezervaciju sa baze?')) {
-                db.ref('reservations/' + id).remove();
-            }
-        }
-
-        // PRINT VOUCHER
-        function printVoucher(id) {
-            const res = reservations.find(r => r.id === id);
-            if (!res) return;
-
-            document.getElementById('p-id').innerText = '#' + res.id;
-            document.getElementById('p-created-at').innerText = 'Datum: ' + new Date().toLocaleDateString('sr-RS');
-            document.getElementById('p-name').innerText = res.passengerName;
-            document.getElementById('p-phone').innerText = res.passengerPhone;
-            document.getElementById('p-passengers').innerText = res.passengers;
-            document.getElementById('p-luggage').innerText = res.luggage;
-            document.getElementById('p-type').innerText = res.type;
-            document.getElementById('p-datetime').innerText = formatDateTime(res.dateTime);
-            document.getElementById('p-flight').innerText = res.flight || 'Nije navedeno';
-            document.getElementById('p-pickup').innerText = res.pickup;
-            document.getElementById('p-dropoff').innerText = res.dropoff;
-            document.getElementById('p-driver').innerText = res.driver || 'Biće naknadno dodeljen';
-            document.getElementById('p-vehicle').innerText = res.vehicleType;
-            document.getElementById('p-price').innerText = Number(res.price || 0).toLocaleString('sr-RS');
-            document.getElementById('p-payment').innerText = res.paymentMethod;
-            document.getElementById('p-notes').innerText = res.notes || 'Nema posebnih napomena.';
-
-            window.print();
-        }
-
-        // CSV EXPORT
-        function exportToCSV() {
-            let csv = 'ID,Ime Putnika,Telefon,Tip,Datum,Polaziste,Odrediste,Cena,Status\n';
-            reservations.forEach(r => {
-                csv += `"${r.id}","${r.passengerName}","${r.passengerPhone}","${r.type}","${r.dateTime}","${r.pickup}","${r.dropoff}","${r.price}","${r.status}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", `transferi_izvoz_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // HELPERS
-        function getStatusBadge(status) {
-            switch (status) {
-                case 'Potvrđeno':
-                    return `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-2.5 py-1 rounded-full font-medium">Potvrđeno</span>`;
-                case 'Na čekanju':
-                    return `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs px-2.5 py-1 rounded-full font-medium">Na čekanju</span>`;
-                case 'Završeno':
-                    return `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs px-2.5 py-1 rounded-full font-medium">Završeno</span>`;
-                case 'Otkazano':
-                    return `<span class="bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs px-2.5 py-1 rounded-full font-medium">Otkazano</span>`;
-                default:
-                    return `<span class="bg-neutral-800 text-neutral-400 text-xs px-2.5 py-1 rounded-full">${status}</span>`;
-            }
-        }
-
-        function formatDateTime(dtStr) {
-            if (!dtStr) return '-';
-            const d = new Date(dtStr);
-            return d.toLocaleDateString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' u ' + d.toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' });
-        }
-
-        function openAddDriverModal() {
-            const name = prompt("Ime i prezime vozača:");
-            const phone = prompt("Broj telefona:");
-            if(name && phone) {
-                const id = 'd_' + Date.now();
-                db.ref('drivers/' + id).set({ id, name, phone, status: 'Slobodan', vehicle: 'Nije dodeljeno' });
-            }
-        }
-
-        function openAddVehicleModal() {
-            const model = prompt("Model vozila:");
-            const reg = prompt("Registracija:");
-            if(model && reg) {
-                const id = 'v_' + Date.now();
-                db.ref('fleet/' + id).set({ id, model, reg, capacity: '4 mesta', status: 'Aktivno' });
-            }
-        }
-
-        // INITIAL FALLBACKS
-        function getInitialDrivers() {
-            return [
-                { id: 'd1', name: 'Marko Petrović', phone: '+381 64 111 2233', status: 'Slobodan', vehicle: 'Mercedes E-Class (BG-1234-AB)' },
-                { id: 'd2', name: 'Nikola Jovanović', phone: '+381 63 999 8877', status: 'Slobodan', vehicle: 'Škoda Octavia (BG-5678-CD)' }
-            ];
-        }
-
-        function getInitialFleet() {
-            return [
-                { id: 'f1', model: 'Škoda Octavia', reg: 'BG-5678-CD', capacity: '4 mesta', status: 'Aktivno' },
-                { id: 'f2', model: 'Mercedes-Benz E-Class', reg: 'BG-1234-AB', capacity: '4 mesta', status: 'Aktivno' }
-            ];
-        }
-
-        function getInitialReservations() {
-            return [];
-        }
-    </script>
+      lucide.createIcons();
+    }
+  </script>
 </body>
 </html>
